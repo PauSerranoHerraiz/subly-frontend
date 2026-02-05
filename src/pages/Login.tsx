@@ -20,7 +20,7 @@ export default function Login() {
 
       if (!token) throw new Error("No token received from server");
 
-      login(token); // ✅ guarda en authToken y actualiza el estado
+      login(token); 
       navigate("/dashboard");
     } catch (err: any) {
       setError(err.response?.data?.message || err.message || "Login failed");

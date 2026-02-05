@@ -21,7 +21,7 @@ export default function Signup() {
       /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{6,}$/.test(password);
 
     if (!passwordOk) {
-      setError("Password must be 6+ chars, include 1 uppercase, 1 lowercase and 1 number");
+      setError("Password must be 6+ characters, include 1 uppercase, 1 lowercase and 1 number");
       return;
     }
 

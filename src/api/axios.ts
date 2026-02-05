@@ -26,7 +26,6 @@ api.interceptors.response.use(
     }
 
     if (error.response?.status === 429) {
-      // Too many requests
       alert("Too many requests. Please try again in a moment.");
     }
 

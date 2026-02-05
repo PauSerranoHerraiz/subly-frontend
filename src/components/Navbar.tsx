@@ -27,11 +27,10 @@ export default function Navbar() {
     <nav className="bg-gray-800 border-b border-gray-700 shadow-sm sticky top-0 z-50">
       <div className="max-w-7xl mx-auto px-6 sm:px-8 lg:px-10">
         <div className="flex justify-between h-16 items-center">
-          <Link to="/" className="flex items-center">
+          <Link to="/dashboard" className="flex items-center">
             <img src="/subly-navbar.svg" alt="Subly" className="h-10" />
           </Link>
 
-          {/* Desktop */}
           <div className="hidden md:flex items-center gap-4">
             {isAuthenticated ? (
               <>
@@ -73,7 +72,6 @@ export default function Navbar() {
             )}
           </div>
 
-          {/* Mobile toggle */}
           <button
             className="md:hidden text-gray-300"
             onClick={() => setMobileOpen((v) => !v)}
@@ -84,7 +82,6 @@ export default function Navbar() {
         </div>
       </div>
 
-      {/* Mobile menu */}
       {mobileOpen && (
         <div className="md:hidden bg-gray-800 border-t border-gray-700 px-6 py-4 space-y-2">
           {isAuthenticated ? (

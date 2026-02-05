@@ -22,19 +22,19 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   );
 
   const login = (newToken: string) => {
-    console.log("🔑 Saving token:", newToken);
+
     localStorage.setItem("authToken", newToken);
     setToken(newToken);
   };
 
   const logout = () => {
-    console.log("🚪 Logging out");
+   
     localStorage.removeItem("authToken");
     setToken(null);
   };
 
   useEffect(() => {
-    console.log("🔐 Current token:", token);
+   
   }, [token]);
 
   return (

@@ -43,9 +43,7 @@ export default function Subscriptions() {
     addToast("Subscription deleted", "info");
   };
 
-  const activeCount = subscriptions.filter(
-    (s) => s.status === "ACTIVE"
-  ).length;
+  const activeCount = subscriptions.filter((s) => s.status === "ACTIVE").length;
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
