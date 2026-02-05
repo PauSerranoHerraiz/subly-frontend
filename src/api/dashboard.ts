@@ -1,5 +1,5 @@
 import api from "./axios";
-import type { Customer, Subscription, Plan, SubscriptionWithRelations } from "../types";
+import type { Customer, Plan, SubscriptionWithRelations } from "../types";
 
 export const getDashboardData = (): Promise<{
   customers: Customer[];

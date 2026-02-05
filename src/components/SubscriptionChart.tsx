@@ -75,7 +75,7 @@ export default function SubscriptionChart({ subscriptions }: SubscriptionChartPr
             {total}
           </text>
 
-          <Tooltip contentStyle={tooltipStyle} formatter={(value: number) => value.toString()} />
+          <Tooltip contentStyle={tooltipStyle} formatter={(value: number | undefined) => value?.toString() ?? "0"} />
           <Legend
             verticalAlign="bottom"
             height={36}
