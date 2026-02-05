@@ -34,7 +34,8 @@ export default function Signup() {
       await api.post("/auth/signup", { email, password, companyName });
 
       const res = await api.post("/auth/login", { email, password });
-      login(res.data.authToken);
+      const token = res.data.authToken || res.data.token;
+      login(token);
       navigate("/customers");
     } catch (err: any) {
       console.error("Signup error:", err);
