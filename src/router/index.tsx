@@ -1,9 +1,9 @@
 import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
 import { useEffect } from "react";
 import { logPageView } from "../utils/analytics";
-import PublicLayout from "../layouts/PublicLayout";
-import ProtectedLayout from "../layouts/ProtectedLayout";
-import ProtectedRoute from "../components/ProtectedRoute";
+import PublicLayout from "../components/PublicLayout";
+import ProtectedLayout from "../components/ProtectedLayout";
+import ProtectedRoute from "../auth/ProtectedRoute";
 import Landing from "../pages/Landing";
 import About from "../pages/About";
 import Login from "../pages/Login";
@@ -29,7 +29,6 @@ export default function AppRouter() {
     <BrowserRouter>
       <PageViewTracker />
       <Routes>
-        {/* Public routes with footer */}
         <Route
           path="/"
           element={
@@ -47,11 +46,9 @@ export default function AppRouter() {
           }
         />
 
-        {/* Auth pages (no footer) */}
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<Signup />} />
 
-        {/* Protected routes */}
         <Route
           path="/dashboard"
           element={
@@ -93,7 +90,6 @@ export default function AppRouter() {
           }
         />
 
-        {/* 404 */}
         <Route path="*" element={<NotFound />} />
       </Routes>
     </BrowserRouter>
