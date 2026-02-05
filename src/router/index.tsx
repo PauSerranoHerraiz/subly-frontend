@@ -1,6 +1,18 @@
 import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
 import { useEffect } from "react";
 import { logPageView } from "../utils/analytics";
+import PublicLayout from "../layouts/PublicLayout";
+import ProtectedLayout from "../layouts/ProtectedLayout";
+import ProtectedRoute from "../components/ProtectedRoute";
+import Landing from "../pages/Landing";
+import About from "../pages/About";
+import Login from "../pages/Login";
+import Signup from "../pages/Signup";
+import Dashboard from "../pages/Dashboard";
+import Customers from "../pages/Customers";
+import Plans from "../pages/Plans";
+import Subscriptions from "../pages/Subscriptions";
+import NotFound from "../pages/NotFound";
 
 function PageViewTracker() {
   const location = useLocation();
