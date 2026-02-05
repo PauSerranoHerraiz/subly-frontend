@@ -3,23 +3,7 @@ import { Link } from "react-router-dom";
 export default function Landing() {
   return (
     <div className="min-h-screen bg-gray-900 text-white">
-      <header className="max-w-7xl mx-auto px-6 py-8 flex items-center justify-between">
-        <img src="/subly-navbar.svg" alt="Subly" className="h-12" />
-        <div className="flex gap-3">
-          <Link
-            to="/login"
-            className="px-4 py-2 rounded-lg bg-gray-800 hover:bg-gray-700 text-sm"
-          >
-            Sign in
-          </Link>
-          <Link
-            to="/signup"
-            className="px-4 py-2 rounded-lg bg-lime-500 hover:bg-lime-400 text-gray-900 text-sm font-semibold"
-          >
-            Get started
-          </Link>
-        </div>
-      </header>
+      
 
       <main className="max-w-7xl mx-auto px-6 py-20 grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
         <div>
