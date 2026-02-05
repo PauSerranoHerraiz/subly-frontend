@@ -1,20 +1,21 @@
-import { BrowserRouter, Routes, Route } from "react-router-dom";
-import Login from "../pages/Login";
-import Signup from "../pages/Signup";
-import Dashboard from "../pages/Dashboard";
-import Customers from "../pages/Customers";
-import Plans from "../pages/Plans";
-import Subscriptions from "../pages/Subscriptions";
-import Landing from "../pages/Landing";
-import About from "../pages/About";
-import ProtectedRoute from "../auth/ProtectedRoute";
-import ProtectedLayout from "../components/ProtectedLayout";
-import PublicLayout from "../components/PublicLayout";
-import NotFound from "../pages/NotFound";
+import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
+import { useEffect } from "react";
+import { logPageView } from "../utils/analytics";
+
+function PageViewTracker() {
+  const location = useLocation();
+
+  useEffect(() => {
+    logPageView();
+  }, [location.pathname]);
+
+  return null;
+}
 
 export default function AppRouter() {
   return (
     <BrowserRouter>
+      <PageViewTracker />
       <Routes>
         {/* Public routes with footer */}
         <Route
