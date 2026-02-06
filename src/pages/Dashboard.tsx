@@ -1,8 +1,6 @@
 import { useEffect, useState } from "react";
 import { getDashboardData } from "../api/dashboard";
 import {
-  LineChart,
-  Line,
   BarChart,
   Bar,
   XAxis,
@@ -84,7 +82,7 @@ export default function Dashboard() {
 
         <DashboardStats
           customers={data.customers}
-          plans={data.plans}
+          
           subscriptions={data.subscriptions}
         />
 

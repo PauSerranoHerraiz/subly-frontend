@@ -1,18 +1,15 @@
-import type { Customer, Plan, SubscriptionWithRelations } from "../types";
+import type { Customer, SubscriptionWithRelations } from "../types";
 
 interface DashboardStatsProps {
   customers: Customer[];
-  plans: Plan[];
   subscriptions: SubscriptionWithRelations[];
 }
 
 export default function DashboardStats({
   customers,
-  plans,
   subscriptions,
 }: DashboardStatsProps) {
   const activeSubs = subscriptions.filter((s) => s.status === "ACTIVE").length;
-  const pausedSubs = subscriptions.filter((s) => s.status === "PAUSED").length;
   const cancelledSubs = subscriptions.filter((s) => s.status === "CANCELLED").length;
 
   const mrr = subscriptions
@@ -68,7 +65,6 @@ export default function DashboardStats({
                 {stat.value}
               </p>
             </div>
-            
           </div>
         </div>
       ))}
