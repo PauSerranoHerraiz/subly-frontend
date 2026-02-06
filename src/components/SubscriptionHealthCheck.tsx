@@ -27,7 +27,7 @@ export default function SubscriptionHealthCheck({
 
   return (
     <div className="space-y-4">
-      {/* Health Score */}
+ 
       <div className="bg-gradient-to-br from-gray-800/50 to-gray-900/50 border border-gray-700/50 rounded-xl p-6 backdrop-blur-sm">
         <div className="flex items-center justify-between mb-4">
           <h3 className="text-lg font-bold text-white">Subscription Health</h3>
@@ -36,7 +36,6 @@ export default function SubscriptionHealthCheck({
           </span>
         </div>
 
-        {/* Progress Bar */}
         <div className="w-full bg-gray-900/50 rounded-full h-2 overflow-hidden">
           <div
             className={`h-full transition-all duration-500 ${
@@ -55,7 +54,6 @@ export default function SubscriptionHealthCheck({
         </p>
       </div>
 
-      {/* Status Breakdown */}
       <div className="grid grid-cols-3 gap-3">
         {statusCards.map((card) => (
           <div

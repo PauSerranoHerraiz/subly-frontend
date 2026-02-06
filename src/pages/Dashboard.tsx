@@ -74,7 +74,7 @@ export default function Dashboard() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-950 via-gray-900 to-gray-950">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
-        {/* Header */}
+     
         <div className="mb-10">
           <h1 className="text-4xl font-bold bg-gradient-to-r from-lime-400 to-lime-300 bg-clip-text text-transparent mb-2">
             Dashboard
@@ -82,29 +82,25 @@ export default function Dashboard() {
           <p className="text-gray-400">Welcome back! Here's your business overview.</p>
         </div>
 
-        {/* Stats Cards */}
         <DashboardStats
           customers={data.customers}
           plans={data.plans}
           subscriptions={data.subscriptions}
         />
 
-        {/* Main Content Grid */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-10">
-          {/* Revenue Chart - Full Width */}
+   
           <div className="lg:col-span-2">
             <RevenueChart subscriptions={data.subscriptions} />
           </div>
 
-          {/* Subscription Health */}
           <div>
             <SubscriptionHealthCheck subscriptions={data.subscriptions} />
           </div>
         </div>
 
-        {/* Charts Grid */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-10">
-          {/* Subscriptions by Status - Subtle Pie Chart */}
+
           <div className="bg-gradient-to-br from-gray-800/50 to-gray-900/50 border border-gray-700/50 rounded-xl p-6 backdrop-blur-sm">
             <h3 className="text-lg font-bold text-white mb-4">Subscriptions by Status</h3>
             <ResponsiveContainer width="100%" height={280}>
@@ -147,7 +143,6 @@ export default function Dashboard() {
             </div>
           </div>
 
-          {/* Subscriptions by Plan - Subtle Bar Chart */}
           <div className="bg-gradient-to-br from-gray-800/50 to-gray-900/50 border border-gray-700/50 rounded-xl p-6 backdrop-blur-sm">
             <h3 className="text-lg font-bold text-white mb-4">Subscriptions by Plan</h3>
             <ResponsiveContainer width="100%" height={280}>
@@ -175,12 +170,10 @@ export default function Dashboard() {
           </div>
         </div>
 
-        {/* Top Plans */}
         <div className="mb-10">
           <TopPlans plans={data.plans} subscriptions={data.subscriptions} />
         </div>
 
-        {/* Subscriptions Table */}
         <div className="bg-gradient-to-br from-gray-800/50 to-gray-900/50 border border-gray-700/50 rounded-xl overflow-hidden backdrop-blur-sm">
           <div className="bg-gray-900/50 px-6 py-4 border-b border-gray-700">
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">

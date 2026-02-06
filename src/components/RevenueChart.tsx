@@ -14,7 +14,6 @@ interface RevenueChartProps {
 }
 
 export default function RevenueChart({ subscriptions }: RevenueChartProps) {
-  // Calcular MRR real por plan
   const mrrByPlan = subscriptions
     .filter((s) => s.status === "ACTIVE")
     .reduce(
@@ -90,7 +89,6 @@ export default function RevenueChart({ subscriptions }: RevenueChartProps) {
         </ResponsiveContainer>
       )}
 
-      {/* Plan Breakdown */}
       <div className="mt-6 grid grid-cols-2 md:grid-cols-3 gap-3">
         {mrrByPlan.map((plan) => (
           <div
