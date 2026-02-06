@@ -10,7 +10,14 @@ import {
   CartesianGrid,
   Tooltip,
   ResponsiveContainer,
+  PieChart,
+  Pie,
+  Cell,
 } from "recharts";
+import DashboardStats from "../components/DashboardStats";
+import RevenueChart from "../components/RevenueChart";
+import SubscriptionHealthCheck from "../components/SubscriptionHealthCheck";
+import TopPlans from "../components/TopPlans";
 import type { Customer, Plan, SubscriptionWithRelations } from "../types";
 
 export default function Dashboard() {
@@ -30,34 +37,29 @@ export default function Dashboard() {
 
   if (!data) {
     return (
-      <div className="min-h-screen flex items-center justify-center text-gray-400">
-        Loading dashboard…
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-lime-400 mx-auto mb-4"></div>
+          <p className="text-gray-400">Loading dashboard…</p>
+        </div>
       </div>
     );
   }
 
-  const activeSubs = data.subscriptions.filter((s) => s.status === "ACTIVE")
-    .length;
-  const pausedSubs = data.subscriptions.filter((s) => s.status === "PAUSED")
-    .length;
-  const cancelledSubs = data.subscriptions.filter((s) => s.status === "CANCELLED")
-    .length;
+  const activeSubs = data.subscriptions.filter((s) => s.status === "ACTIVE").length;
+  const pausedSubs = data.subscriptions.filter((s) => s.status === "PAUSED").length;
+  const cancelledSubs = data.subscriptions.filter((s) => s.status === "CANCELLED").length;
 
   const statusData = [
-    { name: "Active", value: activeSubs },
-    { name: "Paused", value: pausedSubs },
-    { name: "Cancelled", value: cancelledSubs },
+    { name: "Active", value: activeSubs, color: "#22c55e" },
+    { name: "Paused", value: pausedSubs, color: "#eab308" },
+    { name: "Cancelled", value: cancelledSubs, color: "#ef4444" },
   ];
 
   const planData = data.plans.map((plan) => ({
     name: plan.name,
     count: data.subscriptions.filter((s) => s.planId === plan.id).length,
   }));
-
-  const filteredCustomers = data.customers.filter((c) =>
-    c.name.toLowerCase().includes(searchCustomer.toLowerCase()) ||
-    c.email.toLowerCase().includes(searchCustomer.toLowerCase())
-  );
 
   const filteredSubscriptions = data.subscriptions.filter((sub) => {
     const matchesPlan = !filterPlan || sub.planId === filterPlan;
@@ -70,216 +72,244 @@ export default function Dashboard() {
   });
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
-     
-      <div className="flex items-center justify-between mb-10">
-        <h1 className="text-3xl font-bold text-white">Dashboard</h1>
-        <span className="text-sm text-gray-400">Overview</span>
-      </div>
-
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
-        <div className="bg-gray-800 border border-gray-700 rounded-xl p-6">
-          <p className="text-sm text-gray-400 mb-1">Total Customers</p>
-          <p className="text-4xl font-bold text-lime-400">{data.customers.length}</p>
+    <div className="min-h-screen bg-gradient-to-br from-gray-950 via-gray-900 to-gray-950">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+        {/* Header */}
+        <div className="mb-10">
+          <h1 className="text-4xl font-bold bg-gradient-to-r from-lime-400 to-lime-300 bg-clip-text text-transparent mb-2">
+            Dashboard
+          </h1>
+          <p className="text-gray-400">Welcome back! Here's your business overview.</p>
         </div>
 
-        <div className="bg-gray-800 border border-lime-400/30 rounded-xl p-6 shadow-[0_0_20px_rgba(163,230,53,0.15)]">
-          <p className="text-sm text-gray-400 mb-1">Active Subscriptions</p>
-          <p className="text-4xl font-bold text-lime-400">{activeSubs}</p>
+        {/* Stats Cards */}
+        <DashboardStats
+          customers={data.customers}
+          plans={data.plans}
+          subscriptions={data.subscriptions}
+        />
+
+        {/* Main Content Grid */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-10">
+          {/* Revenue Chart - Full Width */}
+          <div className="lg:col-span-2">
+            <RevenueChart subscriptions={data.subscriptions} />
+          </div>
+
+          {/* Subscription Health */}
+          <div>
+            <SubscriptionHealthCheck subscriptions={data.subscriptions} />
+          </div>
         </div>
 
-        <div className="bg-gray-800 border border-gray-700 rounded-xl p-6">
-          <p className="text-sm text-gray-400 mb-1">Total Plans</p>
-          <p className="text-4xl font-bold text-white">{data.plans.length}</p>
-        </div>
-      </div>
+        {/* Charts Grid */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-10">
+          {/* Subscriptions by Status - Subtle Pie Chart */}
+          <div className="bg-gradient-to-br from-gray-800/50 to-gray-900/50 border border-gray-700/50 rounded-xl p-6 backdrop-blur-sm">
+            <h3 className="text-lg font-bold text-white mb-4">Subscriptions by Status</h3>
+            <ResponsiveContainer width="100%" height={280}>
+              <PieChart>
+                <Pie
+                  data={statusData}
+                  cx="50%"
+                  cy="50%"
+                  innerRadius={60}
+                  outerRadius={100}
+                  paddingAngle={2}
+                  dataKey="value"
+                >
+                  {statusData.map((entry, index) => (
+                    <Cell key={`cell-${index}`} fill={entry.color} opacity={0.8} />
+                  ))}
+                </Pie>
+                <Tooltip
+                  cursor={{ fill: "rgba(255,255,255,0.04)" }}
+                  contentStyle={{
+                    backgroundColor: "#1f2937",
+                    border: "1px solid #444",
+                    borderRadius: "8px",
+                  }}
+                />
+              </PieChart>
+            </ResponsiveContainer>
+            <div className="flex justify-center gap-6 mt-4 text-sm">
+              {statusData.map((item) => (
+                <div key={item.name} className="flex items-center gap-2">
+                  <div
+                    className="w-3 h-3 rounded-full"
+                    style={{ backgroundColor: item.color }}
+                  />
+                  <span className="text-gray-400">
+                    {item.name} <span className="font-bold text-white">{item.value}</span>
+                  </span>
+                </div>
+              ))}
+            </div>
+          </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-10">
-        <div className="bg-gray-800 border border-gray-700 rounded-xl p-6">
-          <h3 className="text-lg font-semibold text-white mb-4">Subscriptions by Status</h3>
-          <ResponsiveContainer width="100%" height={300}>
-            <BarChart data={statusData}>
-              <CartesianGrid strokeDasharray="3 3" stroke="#444" />
-              <XAxis dataKey="name" stroke="#999" />
-              <YAxis stroke="#999" />
-              <Tooltip
-                contentStyle={{ backgroundColor: "#1f2937", border: "1px solid #444" }}
-                cursor={{ fill: "rgba(255,255,255,0.04)" }}
-              />
-              <Bar dataKey="value" fill="#22c55e" activeBar={false} />
-            </BarChart>
-          </ResponsiveContainer>
+          {/* Subscriptions by Plan - Subtle Bar Chart */}
+          <div className="bg-gradient-to-br from-gray-800/50 to-gray-900/50 border border-gray-700/50 rounded-xl p-6 backdrop-blur-sm">
+            <h3 className="text-lg font-bold text-white mb-4">Subscriptions by Plan</h3>
+            <ResponsiveContainer width="100%" height={280}>
+              <BarChart data={planData}>
+                <CartesianGrid strokeDasharray="3 3" stroke="#333" opacity={0.3} />
+                <XAxis dataKey="name" stroke="#666" style={{ fontSize: "12px" }} />
+                <YAxis stroke="#666" style={{ fontSize: "12px" }} />
+                <Tooltip
+                  cursor={{ fill: "rgba(255,255,255,0.04)" }}
+                  contentStyle={{
+                    backgroundColor: "#1f2937",
+                    border: "1px solid #444",
+                    borderRadius: "8px",
+                  }}
+                />
+                <Bar
+                  dataKey="count"
+                  fill="#22c55e"
+                  radius={[6, 6, 0, 0]}
+                  opacity={0.7}
+                  activeBar={{ fill: "#22c55e", opacity: 0.9 }}
+                />
+              </BarChart>
+            </ResponsiveContainer>
+          </div>
         </div>
 
-        <div className="bg-gray-800 border border-gray-700 rounded-xl p-6">
-          <h3 className="text-lg font-semibold text-white mb-4">Subscriptions by Plan</h3>
-          <ResponsiveContainer width="100%" height={300}>
-            <LineChart data={planData}>
-              <CartesianGrid strokeDasharray="3 3" stroke="#444" />
-              <XAxis dataKey="name" stroke="#999" />
-              <YAxis stroke="#999" />
-              <Tooltip
-                contentStyle={{ backgroundColor: "#1f2937", border: "1px solid #444" }}
-              />
-              <Line type="monotone" dataKey="count" stroke="#22c55e" strokeWidth={2} />
-            </LineChart>
-          </ResponsiveContainer>
-        </div>
-      </div>
-
-      <div className="bg-gray-800 border border-gray-700 rounded-xl p-6 mb-10">
-        <div className="flex items-center justify-between mb-4">
-          <h3 className="text-lg font-semibold text-white">Recent Customers</h3>
-          <span className="text-xs text-gray-400">{filteredCustomers.length} results</span>
+        {/* Top Plans */}
+        <div className="mb-10">
+          <TopPlans plans={data.plans} subscriptions={data.subscriptions} />
         </div>
 
-        <div className="mb-4">
-          <input
-            type="text"
-            placeholder="Search by name or email..."
-            value={searchCustomer}
-            onChange={(e) => setSearchCustomer(e.target.value)}
-            className="w-full px-4 py-2 rounded-lg bg-gray-900 text-white border border-gray-600 focus:outline-none focus:ring-2 focus:ring-lime-400 placeholder-gray-500"
-          />
-        </div>
-
-        {filteredCustomers.length === 0 ? (
-          <p className="text-gray-400 text-center py-6">
-            {searchCustomer ? "No customers match your search" : "No customers yet"}
-          </p>
-        ) : (
-          <div className="space-y-2 max-h-80 overflow-y-auto">
-            {filteredCustomers.slice(-5).reverse().map((customer) => (
-              <div
-                key={customer.id}
-                className="bg-gray-900 p-3 rounded-lg border border-gray-700 hover:border-gray-600 transition"
-              >
-                <p className="text-white font-medium">{customer.name}</p>
-                <p className="text-sm text-gray-400">{customer.email}</p>
-                <p className="text-xs text-gray-500">{customer.companyName}</p>
+        {/* Subscriptions Table */}
+        <div className="bg-gradient-to-br from-gray-800/50 to-gray-900/50 border border-gray-700/50 rounded-xl overflow-hidden backdrop-blur-sm">
+          <div className="bg-gray-900/50 px-6 py-4 border-b border-gray-700">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div>
+                <label className="block text-xs font-semibold text-gray-400 mb-2 uppercase">
+                  Search Customer
+                </label>
+                <input
+                  type="text"
+                  placeholder="Name or email..."
+                  value={searchCustomer}
+                  onChange={(e) => setSearchCustomer(e.target.value)}
+                  className="w-full px-3 py-2 rounded-lg bg-gray-800 text-white text-sm border border-gray-600 focus:outline-none focus:ring-2 focus:ring-lime-400 placeholder-gray-600"
+                />
               </div>
-            ))}
-          </div>
-        )}
-      </div>
 
-      <div className="bg-gray-800 border border-gray-700 rounded-xl overflow-hidden">
-        
-        <div className="bg-gray-900 px-6 py-4 border-b border-gray-700">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <div>
-              <label className="block text-xs font-semibold text-gray-400 mb-2 uppercase">
-                Search Customer
-              </label>
-              <input
-                type="text"
-                placeholder="Name or email..."
-                value={searchCustomer}
-                onChange={(e) => setSearchCustomer(e.target.value)}
-                className="w-full px-3 py-2 rounded-lg bg-gray-800 text-white text-sm border border-gray-600 focus:outline-none focus:ring-2 focus:ring-lime-400 placeholder-gray-600"
-              />
+              <div>
+                <label className="block text-xs font-semibold text-gray-400 mb-2 uppercase">
+                  Filter by Plan
+                </label>
+                <select
+                  value={filterPlan}
+                  onChange={(e) => setFilterPlan(e.target.value)}
+                  className="w-full px-3 py-2 rounded-lg bg-gray-800 text-white text-sm border border-gray-600 focus:outline-none focus:ring-2 focus:ring-lime-400"
+                >
+                  <option value="">All Plans</option>
+                  {data.plans.map((plan) => (
+                    <option key={plan.id} value={plan.id}>
+                      {plan.name}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              <div>
+                <label className="block text-xs font-semibold text-gray-400 mb-2 uppercase">
+                  Filter by Status
+                </label>
+                <select
+                  value={filterStatus}
+                  onChange={(e) => setFilterStatus(e.target.value)}
+                  className="w-full px-3 py-2 rounded-lg bg-gray-800 text-white text-sm border border-gray-600 focus:outline-none focus:ring-2 focus:ring-lime-400"
+                >
+                  <option value="">All Statuses</option>
+                  <option value="ACTIVE">Active</option>
+                  <option value="PAUSED">Paused</option>
+                  <option value="CANCELLED">Cancelled</option>
+                </select>
+              </div>
             </div>
 
-            <div>
-              <label className="block text-xs font-semibold text-gray-400 mb-2 uppercase">
-                Filter by Plan
-              </label>
-              <select
-                value={filterPlan}
-                onChange={(e) => setFilterPlan(e.target.value)}
-                className="w-full px-3 py-2 rounded-lg bg-gray-800 text-white text-sm border border-gray-600 focus:outline-none focus:ring-2 focus:ring-lime-400"
+            {(searchCustomer || filterPlan || filterStatus) && (
+              <button
+                onClick={() => {
+                  setSearchCustomer("");
+                  setFilterPlan("");
+                  setFilterStatus("");
+                }}
+                className="mt-3 text-xs text-lime-400 hover:text-lime-300 transition font-medium"
               >
-                <option value="">All Plans</option>
-                {data.plans.map((plan) => (
-                  <option key={plan.id} value={plan.id}>
-                    {plan.name}
-                  </option>
-                ))}
-              </select>
-            </div>
-
-            <div>
-              <label className="block text-xs font-semibold text-gray-400 mb-2 uppercase">
-                Filter by Status
-              </label>
-              <select
-                value={filterStatus}
-                onChange={(e) => setFilterStatus(e.target.value)}
-                className="w-full px-3 py-2 rounded-lg bg-gray-800 text-white text-sm border border-gray-600 focus:outline-none focus:ring-2 focus:ring-lime-400"
-              >
-                <option value="">All Statuses</option>
-                <option value="ACTIVE">Active</option>
-                <option value="PAUSED">Paused</option>
-                <option value="CANCELLED">Cancelled</option>
-              </select>
-            </div>
+                ✕ Clear all filters
+              </button>
+            )}
           </div>
 
-          {(searchCustomer || filterPlan || filterStatus) && (
-            <button
-              onClick={() => {
-                setSearchCustomer("");
-                setFilterPlan("");
-                setFilterStatus("");
-              }}
-              className="mt-3 text-xs text-lime-400 hover:text-lime-300 transition font-medium"
-            >
-              Clear all filters
-            </button>
-          )}
-        </div>
-
-        <div className="bg-gray-900 px-6 py-2 border-b border-gray-700">
-          <p className="text-xs text-gray-400">
-            Showing <span className="font-semibold text-white">{filteredSubscriptions.length}</span> of{" "}
-            <span className="font-semibold text-white">{data.subscriptions.length}</span> subscriptions
-          </p>
-        </div>
-
-        {filteredSubscriptions.length === 0 ? (
-          <div className="px-6 py-8 text-center">
-            <p className="text-gray-400">
-              {data.subscriptions.length === 0
-                ? "No subscriptions yet"
-                : "No subscriptions match your filters"}
+          <div className="bg-gray-900/50 px-6 py-2 border-b border-gray-700">
+            <p className="text-xs text-gray-400">
+              Showing <span className="font-semibold text-white">{filteredSubscriptions.length}</span> of{" "}
+              <span className="font-semibold text-white">{data.subscriptions.length}</span> subscriptions
             </p>
           </div>
-        ) : (
-          <table className="min-w-full">
-            <thead className="bg-gray-900">
-              <tr>
-                <th className="px-6 py-4 text-left text-xs font-semibold text-gray-400 uppercase">Customer</th>
-                <th className="px-6 py-4 text-left text-xs font-semibold text-gray-400 uppercase">Plan</th>
-                <th className="px-6 py-4 text-left text-xs font-semibold text-gray-400 uppercase">Status</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-gray-700">
-              {filteredSubscriptions.map((sub, idx) => (
-                <tr
-                  key={sub.id}
-                  className={`transition ${
-                    idx % 2 === 0 ? "bg-gray-800/40" : "bg-gray-800/10"
-                  } hover:bg-gray-700/40`}
-                >
-                  <td className="px-6 py-4 text-sm text-white">{sub.customer.name}</td>
-                  <td className="px-6 py-4 text-sm text-gray-300">{sub.plan.name}</td>
-                  <td className="px-6 py-4">
-                    <span
-                      className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-medium
-                        ${
-                          sub.status === "ACTIVE"
-                            ? "bg-lime-500/20 text-lime-400 border border-lime-400/30"
-                            : "bg-gray-600/20 text-gray-400 border border-gray-600/30"
-                        }`}
-                    >
-                      {sub.status}
-                    </span>
-                  </td>
+
+          {filteredSubscriptions.length === 0 ? (
+            <div className="px-6 py-12 text-center">
+              <p className="text-gray-400">
+                {data.subscriptions.length === 0
+                  ? "No subscriptions yet. Create one to get started!"
+                  : "No subscriptions match your filters"}
+              </p>
+            </div>
+          ) : (
+            <table className="min-w-full">
+              <thead className="bg-gray-900/50">
+                <tr>
+                  <th className="px-6 py-4 text-left text-xs font-semibold text-gray-400 uppercase">
+                    Customer
+                  </th>
+                  <th className="px-6 py-4 text-left text-xs font-semibold text-gray-400 uppercase">
+                    Plan
+                  </th>
+                  <th className="px-6 py-4 text-left text-xs font-semibold text-gray-400 uppercase">
+                    Price
+                  </th>
+                  <th className="px-6 py-4 text-left text-xs font-semibold text-gray-400 uppercase">
+                    Status
+                  </th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
-        )}
+              </thead>
+              <tbody className="divide-y divide-gray-700">
+                {filteredSubscriptions.map((sub) => (
+                  <tr
+                    key={sub.id}
+                    className="hover:bg-gray-700/20 transition"
+                  >
+                    <td className="px-6 py-4 text-sm text-white">{sub.customer.name}</td>
+                    <td className="px-6 py-4 text-sm text-gray-300">{sub.plan.name}</td>
+                    <td className="px-6 py-4 text-sm text-lime-400 font-semibold">
+                      ${sub.plan.priceMonthly / 100}
+                    </td>
+                    <td className="px-6 py-4">
+                      <span
+                        className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-medium
+                          ${
+                            sub.status === "ACTIVE"
+                              ? "bg-lime-500/20 text-lime-400 border border-lime-400/30"
+                              : sub.status === "PAUSED"
+                              ? "bg-yellow-500/20 text-yellow-400 border border-yellow-400/30"
+                              : "bg-red-500/20 text-red-400 border border-red-400/30"
+                          }`}
+                      >
+                        {sub.status}
+                      </span>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          )}
+        </div>
       </div>
     </div>
   );
