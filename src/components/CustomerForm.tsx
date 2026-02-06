@@ -12,13 +12,30 @@ export default function CustomerForm({ onCreate }: CustomerFormProps) {
     phone: "",
   });
   const [submitting, setSubmitting] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  const validateForm = (): string | null => {
+    if (!form.name.trim()) return "Name is required";
+    if (!form.email.trim()) return "Email is required";
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email)) return "Invalid email format";
+    if (!form.companyName.trim()) return "Company name is required";
+    return null;
+  };
 
   const submit = async () => {
-    if (!form.name || !form.email || !form.companyName) return;
+    const validationError = validateForm();
+    if (validationError) {
+      setError(validationError);
+      return;
+    }
+
+    setError(null);
     setSubmitting(true);
     try {
       await onCreate(form);
       setForm({ name: "", email: "", companyName: "", phone: "" });
+    } catch (err: any) {
+      setError(err.message || "Failed to create customer");
     } finally {
       setSubmitting(false);
     }
@@ -26,6 +43,12 @@ export default function CustomerForm({ onCreate }: CustomerFormProps) {
 
   return (
     <div className="flex flex-col gap-3">
+      {error && (
+        <div className="bg-red-500/10 border border-red-500 text-red-400 rounded-lg p-2 text-sm">
+          {error}
+        </div>
+      )}
+
       <input
         placeholder="Full name"
         value={form.name}
@@ -34,6 +57,7 @@ export default function CustomerForm({ onCreate }: CustomerFormProps) {
       />
       <input
         placeholder="Email address"
+        type="email"
         value={form.email}
         onChange={e => setForm({ ...form, email: e.target.value })}
         className="p-3 rounded-lg bg-gray-700 text-white border border-gray-600 focus:outline-none focus:ring-2 focus:ring-lime-400"
@@ -56,7 +80,7 @@ export default function CustomerForm({ onCreate }: CustomerFormProps) {
         disabled={submitting}
         className="mt-2 w-full py-3 bg-lime-500 text-gray-900 font-semibold rounded-lg hover:bg-lime-400 transition disabled:opacity-60"
       >
-        {submitting ? "Creating..." : "Create"}
+        {submitting ? "Creating..." : "Create Customer"}
       </button>
     </div>
   );
